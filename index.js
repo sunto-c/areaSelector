@@ -78,8 +78,6 @@ prot.init = function() {
     var self = this;
     cfg.beforeCreate();
     if (cfg.regionId) {
-        console.log(1);
-        var parentId = cfg.parentId;
         $.ajax({
             url: cfg.loadAllUrl,
             type: 'get',
@@ -98,8 +96,7 @@ prot.init = function() {
                     obj.text = obj.text || obj.name;
                     return obj;
                 });
-                var $select = self.createChild(parentId, selectData);
-                parentId = $select.val();
+                self.createChild(item[0].parentId, selectData);
             });
             cfg.created();
         });
