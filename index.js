@@ -27,6 +27,7 @@ var cfg = {},
         startLevel: void(0), // 开始层级 1：州；2：国家；3：省；4：市；5：区/县；6：街道
         endLevel: void(0), // 结束层级（通常用于限制地区联动范围） 1：州；2：国家；3：省；4：市；5：区/县；6：街道
         regionId: void(0), // 用于初始到某个区域
+        firstPriority: false, // false: parentId,true:startLevel
 
         // 事件
         beforeCreate: emptyFn,
@@ -96,7 +97,11 @@ prot.init = function() {
                     obj.text = obj.text || obj.name;
                     return obj;
                 });
-                self.createChild(item[0].parentId, selectData);
+                self.createChild(
+                    (index === 0 && cfg.firstPriority) ? item[0].lv : item[0].parentId,
+                    selectData,
+                    index
+                );
             });
             cfg.created();
         });
@@ -105,7 +110,7 @@ prot.init = function() {
         cfg.created();
     }
 };
-prot.createChild = function(parentId, data) {
+prot.createChild = function(parentId, data, index) {
     var $areaSelect = createdDoc('select', {}, {level: 1,});
     var $select = $areaSelect.children('select');
     cfg.$el.append($areaSelect);
@@ -123,7 +128,7 @@ prot.createChild = function(parentId, data) {
             cache: true,//缓存
             //传递的参数
             data: function(params) {
-                return {
+                var data = {
                     keyword: params.term, // search term
                     parentId: parentId,
                     // startLevel: cfg.startLevel,
@@ -131,6 +136,11 @@ prot.createChild = function(parentId, data) {
                     currPage: params.page,
                     pageSize: params.page,
                 };
+                if (index === 0 && cfg.firstPriority) {
+                    data.startLevel = data.parentId;
+                    delete data.parentId;
+                }
+                return data;
             },
             //后台数据返回
             processResults: function(data, params) {
