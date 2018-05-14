@@ -134,7 +134,6 @@ prot.createChild = function(parentId, data, index) {
                     // startLevel: cfg.startLevel,
                     endLevel: cfg.endLevel,
                     currPage: params.page,
-                    pageSize: params.page,
                 };
                 if (index === 0 && cfg.firstPriority) {
                     data.startLevel = data.parentId;
